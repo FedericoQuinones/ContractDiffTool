@@ -14,14 +14,16 @@ builder.Services.AddScoped<IDiffEngine, DiffEngineService>();
 builder.Services.AddScoped<IChangeClassifier, ChangeClassifierService>();
 builder.Services.AddScoped<IReportGenerator, HtmlReportGeneratorService>();
 
+var maxFileSize = builder.Configuration.GetValue<long>("Upload:MaxFileSizeBytes");
+
 builder.Services.Configure<FormOptions>(options =>
 {
-    options.MultipartBodyLengthLimit = 52_428_800; // 50 MB
+    options.MultipartBodyLengthLimit = maxFileSize;
 });
 
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.Limits.MaxRequestBodySize = 52_428_800;
+    options.Limits.MaxRequestBodySize = maxFileSize;
 });
 
 var app = builder.Build();

@@ -31,7 +31,6 @@ public class DiffController : ControllerBase
     }
 
     [HttpPost("compare")]
-    [RequestSizeLimit(52_428_800)]
     public IActionResult Compare(IFormFile original, IFormFile revised)
     {
         var validationError = ValidateFiles(original, revised);
@@ -56,7 +55,6 @@ public class DiffController : ControllerBase
     }
 
     [HttpPost("compare/report")]
-    [RequestSizeLimit(52_428_800)]
     public IActionResult CompareReport(IFormFile original, IFormFile revised)
     {
         var validationError = ValidateFiles(original, revised);
