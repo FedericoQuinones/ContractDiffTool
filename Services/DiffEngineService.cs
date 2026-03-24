@@ -44,7 +44,27 @@ public class DiffEngineService : IDiffEngine
             }
         }
 
-        // Pass 2: Fuzzy heading match for unmatched sections
+        // Pass 1.5: Position-based matching for sections without headings
+        foreach (var origSection in original.Sections.Where(s => !matchedOriginal.Contains(s.Index)))
+        {
+            var positionalMatch = revised.Sections
+                .FirstOrDefault(s => !matchedRevised.Contains(s.Index)
+                    && s.Index == origSection.Index);
+
+            if (positionalMatch != null)
+            {
+                matchedOriginal.Add(origSection.Index);
+                matchedRevised.Add(positionalMatch.Index);
+
+                if (!AreFullTextEqual(origSection, positionalMatch))
+                {
+                    var change = CreateModifiedChange(changeIndex++, origSection, positionalMatch);
+                    changes.Add(change);
+                }
+            }
+        }
+
+        // Pass 2: Fuzzy content match for remaining unmatched sections
         foreach (var origSection in original.Sections.Where(s => !matchedOriginal.Contains(s.Index)))
         {
             DocumentSection? bestMatch = null;
@@ -64,6 +84,10 @@ public class DiffEngineService : IDiffEngine
             {
                 matchedOriginal.Add(origSection.Index);
                 matchedRevised.Add(bestMatch.Index);
+
+                // Skip if content is actually identical
+                if (AreFullTextEqual(origSection, bestMatch))
+                    continue;
 
                 var changeType = origSection.Index != bestMatch.Index
                     ? Domain.Models.ChangeType.Moved
@@ -206,6 +230,11 @@ public class DiffEngineService : IDiffEngine
 
     private static bool AreHeadingsEqual(DocumentSection a, DocumentSection b)
     {
+        // Both empty headings — can't match by heading alone
+        if (string.IsNullOrWhiteSpace(a.Heading) && string.IsNullOrWhiteSpace(b.Heading))
+            return false;
+
+        // One empty, one not — not a match
         if (string.IsNullOrWhiteSpace(a.Heading) || string.IsNullOrWhiteSpace(b.Heading))
             return false;
 
@@ -215,6 +244,11 @@ public class DiffEngineService : IDiffEngine
     private static bool AreContentsEqual(DocumentSection a, DocumentSection b)
     {
         return string.Equals(a.Content.Trim(), b.Content.Trim(), StringComparison.Ordinal);
+    }
+
+    private static bool AreFullTextEqual(DocumentSection a, DocumentSection b)
+    {
+        return string.Equals(a.FullText.Trim(), b.FullText.Trim(), StringComparison.Ordinal);
     }
 
     private static DiffSummary BuildSummary(List<SectionChange> changes)
