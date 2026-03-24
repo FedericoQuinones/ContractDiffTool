@@ -1,0 +1,80 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Upload";
+}
+
+<div class="hero">
+    <h1>Compare Contract Versions</h1>
+    <p>Upload two PDF contracts to detect meaningful differences — financial changes, legal term modifications, structural updates, and more.</p>
+</div>
+
+<div class="upload-container">
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="error-alert">
+            @Model.ErrorMessage
+        </div>
+    }
+
+    <form method="post" enctype="multipart/form-data" id="uploadForm">
+        <div class="upload-grid">
+            <div class="drop-zone" id="dropOriginal">
+                <input type="file" name="original" id="originalFile" accept=".pdf" />
+                <div class="drop-content">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    <h3>Original Contract</h3>
+                    <p class="drop-hint">Drag & drop or click to browse</p>
+                    <p class="file-name" id="originalName"></p>
+                </div>
+            </div>
+
+            <div class="vs-badge">VS</div>
+
+            <div class="drop-zone" id="dropRevised">
+                <input type="file" name="revised" id="revisedFile" accept=".pdf" />
+                <div class="drop-content">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="12" y1="11" x2="12" y2="17"></line>
+                        <line x1="9" y1="14" x2="15" y2="14"></line>
+                    </svg>
+                    <h3>Revised Contract</h3>
+                    <p class="drop-hint">Drag & drop or click to browse</p>
+                    <p class="file-name" id="revisedName"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="submit-area">
+            <button type="submit" class="btn-compare" id="compareBtn" disabled>
+                <span class="btn-text">Compare Documents</span>
+                <span class="btn-loading" style="display:none;">
+                    <svg class="spinner" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                    </svg>
+                    Analyzing...
+                </span>
+            </button>
+        </div>
+    </form>
+
+    <div class="features">
+        <div class="feature">
+            <h4>Smart Classification</h4>
+            <p>Changes categorized as Critical, Major, or Minor based on legal and financial impact.</p>
+        </div>
+        <div class="feature">
+            <h4>Semantic Understanding</h4>
+            <p>Detects clauses, sections, definitions, and signature blocks — not just line-by-line text.</p>
+        </div>
+        <div class="feature">
+            <h4>Detailed Reports</h4>
+            <p>Side-by-side diff with highlighted changes, executive summary, and downloadable HTML report.</p>
+        </div>
+    </div>
+</div>

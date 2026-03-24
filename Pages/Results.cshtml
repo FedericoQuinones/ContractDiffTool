@@ -1,0 +1,29 @@
+@page
+@model ResultsModel
+@{
+    ViewData["Title"] = "Results";
+}
+
+<div class="results-toolbar">
+    <a href="/" class="btn-back">&larr; New Comparison</a>
+    @if (Model.Result != null)
+    {
+        <a href="/Results?handler=Download&id=@Model.Result.ComparisonId" class="btn-download">Download Report</a>
+    }
+</div>
+
+<div class="results-container">
+    @if (Model.Result != null)
+    {
+        <div class="report-embed">
+            @Html.Raw(Model.ReportHtml)
+        </div>
+    }
+    else
+    {
+        <div class="no-results">
+            <p>No comparison results found. Please upload two documents to compare.</p>
+            <a href="/" class="btn-compare">Go to Upload</a>
+        </div>
+    }
+</div>
