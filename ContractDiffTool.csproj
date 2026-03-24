@@ -8,8 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="UglyToad.PdfPig" Version="0.1.9" />
+    <PackageReference Include="UglyToad.PdfPig" Version="1.7.0-custom-5" />
     <PackageReference Include="DiffPlex" Version="1.7.2" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <RestoreAdditionalProjectSources>https://www.myget.org/F/uglytoad/api/v3/index.json;$(RestoreAdditionalProjectSources)</RestoreAdditionalProjectSources>
+  </PropertyGroup>
 
 </Project>
